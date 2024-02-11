@@ -62,12 +62,20 @@ func (m *Maze) possibleActions(state entity.Cordinate) []entity.Action {
 	}
 
 	actions := []entity.Action{}
-	for key, value := range candidates {
-		if 0 <= value.Row && value.Row <= m.Height && 0 <= value.Collumn && value.Collumn <= m.Width && m.Walls[value.Row][value.Collumn] != "#" {
-			actions = append(actions, entity.Action{Description: key, Row: value.Row, Collumn: value.Collumn})
+	for action, coordinate := range candidates {
+		if m.isValidCoordinate(coordinate) && !m.isWall(coordinate) {
+			actions = append(actions, entity.Action{Description: action, Row: coordinate.Row, Collumn: coordinate.Collumn})
 		}
 	}
 	return actions
+}
+
+func (m *Maze) isValidCoordinate(coordinate entity.Cordinate) bool {
+	return coordinate.Row >= 0 && coordinate.Row <= m.Height && coordinate.Collumn >= 0 && coordinate.Collumn <= m.Width
+}
+
+func (m *Maze) isWall(coordinate entity.Cordinate) bool {
+	return m.Walls[coordinate.Row][coordinate.Collumn] == "#"
 }
 
 func (m *Maze) Solve(frontier Frontier) (*entity.Solution, error) {

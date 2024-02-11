@@ -7,7 +7,7 @@ type queueFrontier struct {
 }
 
 // NewQueuerFrontier returns queue frontier which applies bread-first search algorithm using queue data structure
-func NewQueuerFrontier() *stackFrontier {
+func NewQueueFrontier() *stackFrontier {
 	return &stackFrontier{frontier: []entity.Node{}}
 }
 
@@ -23,8 +23,8 @@ func (qf *queueFrontier) Remove() entity.Node {
 	if qf.IsEmpty() {
 		return entity.Node{}
 	}
-	node := qf.frontier[len(qf.frontier)-1]
-	qf.frontier = qf.frontier[:len(qf.frontier)-1]
+	node := qf.frontier[0]
+	qf.frontier = qf.frontier[1:]
 	return node
 }
 
