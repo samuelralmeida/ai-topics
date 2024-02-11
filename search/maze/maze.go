@@ -14,14 +14,14 @@ type Frontier interface {
 	Add(node entity.Node)
 	IsEmpty() bool
 	Remove() entity.Node
-	ContainsState(state entity.Cordinate) bool
+	ContainsState(state entity.Coordinate) bool
 }
 
 type Maze struct {
 	Height int
 	Width  int
 	Walls  [][]string
-	Start  entity.Cordinate
+	Start  entity.Coordinate
 	Goal   string
 }
 
@@ -33,7 +33,7 @@ func NewMaze(filename string, goalChar string) (*Maze, error) {
 		return nil, err
 	}
 
-	start := entity.Cordinate{}
+	start := entity.Coordinate{}
 
 	for i, row := range maze.Walls {
 		for j, collumn := range row {
@@ -53,8 +53,8 @@ func NewMaze(filename string, goalChar string) (*Maze, error) {
 	return &maze, nil
 }
 
-func (m *Maze) possibleActions(state entity.Cordinate) []entity.Action {
-	candidates := map[string]entity.Cordinate{
+func (m *Maze) possibleActions(state entity.Coordinate) []entity.Action {
+	candidates := map[string]entity.Coordinate{
 		"up":    {Row: state.Row - 1, Collumn: state.Collumn},
 		"down":  {Row: state.Row + 1, Collumn: state.Collumn},
 		"left":  {Row: state.Row, Collumn: state.Collumn - 1},
@@ -70,17 +70,17 @@ func (m *Maze) possibleActions(state entity.Cordinate) []entity.Action {
 	return actions
 }
 
-func (m *Maze) isValidCoordinate(coordinate entity.Cordinate) bool {
+func (m *Maze) isValidCoordinate(coordinate entity.Coordinate) bool {
 	return coordinate.Row >= 0 && coordinate.Row <= m.Height && coordinate.Collumn >= 0 && coordinate.Collumn <= m.Width
 }
 
-func (m *Maze) isWall(coordinate entity.Cordinate) bool {
+func (m *Maze) isWall(coordinate entity.Coordinate) bool {
 	return m.Walls[coordinate.Row][coordinate.Collumn] == "#"
 }
 
 func (m *Maze) Solve(frontier Frontier) (*entity.Solution, error) {
 	numExplored := 0
-	explored := make(map[entity.Cordinate]struct{})
+	explored := make(map[entity.Coordinate]struct{})
 
 	start := entity.Node{State: m.Start}
 	frontier.Add(start)
@@ -95,7 +95,7 @@ func (m *Maze) Solve(frontier Frontier) (*entity.Solution, error) {
 		numExplored++
 		if m.Walls[node.State.Row][node.State.Collumn] == m.Goal {
 			actions := []entity.Action{}
-			cells := []entity.Cordinate{}
+			cells := []entity.Coordinate{}
 
 			for node.Parent != nil {
 				actions = append(actions, node.Action)
@@ -111,7 +111,7 @@ func (m *Maze) Solve(frontier Frontier) (*entity.Solution, error) {
 
 		explored[node.State] = struct{}{}
 		for _, action := range m.possibleActions(node.State) {
-			state := entity.Cordinate{Row: action.Row, Collumn: action.Collumn}
+			state := entity.Coordinate{Row: action.Row, Collumn: action.Collumn}
 			_, wasExĺored := explored[state]
 			if !frontier.ContainsState(state) && !wasExĺored {
 				child := entity.Node{State: state, Parent: &node, Action: action}
@@ -132,8 +132,8 @@ func (m *Maze) PrintSolve(frontier Frontier) {
 	maze := m.Walls
 	cells := solution.Cells[:len(solution.Cells)-1]
 
-	for _, cordinate := range cells {
-		maze[cordinate.Row][cordinate.Collumn] = "*"
+	for _, coordinate := range cells {
+		maze[coordinate.Row][coordinate.Collumn] = "*"
 	}
 
 	for _, row := range maze {

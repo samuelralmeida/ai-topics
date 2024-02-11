@@ -28,7 +28,7 @@ func (sf *stackFrontier) Remove() entity.Node {
 	return node
 }
 
-func (sf *stackFrontier) ContainsState(state entity.Cordinate) bool {
+func (sf *stackFrontier) ContainsState(state entity.Coordinate) bool {
 	for _, node := range sf.frontier {
 		if node.State == state {
 			return true

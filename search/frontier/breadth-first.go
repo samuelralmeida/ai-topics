@@ -28,7 +28,7 @@ func (qf *queueFrontier) Remove() entity.Node {
 	return node
 }
 
-func (qf *queueFrontier) ContainsState(state entity.Cordinate) bool {
+func (qf *queueFrontier) ContainsState(state entity.Coordinate) bool {
 	for _, node := range qf.frontier {
 		if node.State == state {
 			return true

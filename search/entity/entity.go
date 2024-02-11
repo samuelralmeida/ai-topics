@@ -1,6 +1,6 @@
 package entity
 
-type Cordinate struct {
+type Coordinate struct {
 	Row     int
 	Collumn int
 }
@@ -13,13 +13,13 @@ type Action struct {
 
 type Solution struct {
 	Actions       []Action
-	Cells         []Cordinate
+	Cells         []Coordinate
 	NumExplored   int
-	NodesExplored map[Cordinate]struct{}
+	NodesExplored map[Coordinate]struct{}
 }
 
 type Node struct {
-	State  Cordinate
+	State  Coordinate
 	Parent *Node
 	Action Action
 }
