@@ -1,8 +1,10 @@
 package main
 
 import (
+	"flag"
 	"fmt"
 	"log"
+	"strings"
 
 	"github.com/samuelralmeida/ai-topics/search/frontier"
 	"github.com/samuelralmeida/ai-topics/search/maze"
@@ -11,23 +13,34 @@ import (
 func main() {
 	fmt.Println("AI TOPICS - SEARCH")
 
-	mazeStackAI, err := maze.NewMaze("maze3.txt", "B")
+	flagMazeFile := flag.String("m", "maze1.txt", "maze filename")
+	flagFrontier := flag.String("f", "queue", "frontier option: stack | queue")
+	flagShowSolution := flag.Bool("s", true, "image shows solution path")
+	flagShowExplored := flag.Bool("e", false, "image shows explored path")
+
+	flag.Parse()
+
+	m, err := maze.NewMaze(*flagMazeFile, "B")
 	if err != nil {
 		log.Fatal(err)
 	}
 
-	fmt.Println("")
-	fmt.Println("stack solution")
-	// mazeStackAI.PrintSolve(frontier.NewStackFrontier())
-	mazeStackAI.ImageSolve("stack.png", frontier.NewStackFrontier(), true, true)
+	var f maze.Frontier
+	f = frontier.NewQueueFrontier()
+	if *flagFrontier == "stack" {
+		f = frontier.NewStackFrontier()
+	}
 
-	mazeQueueAI, err := maze.NewMaze("maze3.txt", "B")
+	solution, err := m.Solve(f)
 	if err != nil {
 		log.Fatal(err)
 	}
 
-	fmt.Println("")
-	fmt.Println("queue solution")
-	// mazeQueueAI.PrintSolve(frontier.NewQueueFrontier())
-	mazeQueueAI.ImageSolve("queue.png", frontier.NewQueueFrontier(), true, true)
+	fmt.Printf("%s solution", *flagFrontier)
+	m.GenerateImage(
+		strings.Replace(fmt.Sprintf("%s-%s.png", *flagMazeFile, *flagFrontier), ".txt", "", 1),
+		solution, *flagShowSolution, *flagShowExplored,
+	)
+
+	fmt.Println("Custo:", solution.NumExplored)
 }

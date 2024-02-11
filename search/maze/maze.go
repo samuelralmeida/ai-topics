@@ -4,7 +4,6 @@ import (
 	"bufio"
 	"errors"
 	"fmt"
-	"log"
 	"slices"
 
 	"github.com/fogleman/gg"
@@ -161,13 +160,7 @@ func (m *Maze) Solve(frontier Frontier) (*entity.Solution, error) {
 	}
 }
 
-func (m *Maze) PrintSolve(frontier Frontier) {
-	solution, err := m.Solve(frontier)
-	if err != nil {
-		fmt.Println(err)
-		return
-	}
-
+func (m *Maze) PrintTerminal(solution *entity.Solution) {
 	maze := m.Walls
 	cells := solution.Cells[:len(solution.Cells)-1]
 
@@ -184,12 +177,7 @@ func (m *Maze) PrintSolve(frontier Frontier) {
 	fmt.Println("path cost:", solution.NumExplored)
 }
 
-func (m *Maze) ImageSolve(filename string, frontier Frontier, showSolution, showExplored bool) {
-	solution, err := m.Solve(frontier)
-	if err != nil {
-		fmt.Println(err)
-		return
-	}
+func (m *Maze) GenerateImage(filename string, solution *entity.Solution, showSolution, showExplored bool) error {
 
 	cellSize := 50.0
 	cellBorder := 2.0
@@ -233,8 +221,9 @@ func (m *Maze) ImageSolve(filename string, frontier Frontier, showSolution, show
 	}
 
 	// Save the image to a file
-	err = dc.SavePNG(filename)
+	err := dc.SavePNG(filename)
 	if err != nil {
-		log.Fatal(err)
+		return err
 	}
+	return nil
 }
