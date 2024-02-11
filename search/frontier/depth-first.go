@@ -1,6 +1,8 @@
 package frontier
 
-import "github.com/samuelralmeida/ai-topics/search/entity"
+import (
+	"github.com/samuelralmeida/ai-topics/search/entity"
+)
 
 type stackFrontier struct {
 	frontier []entity.Node
@@ -23,6 +25,7 @@ func (sf *stackFrontier) Remove() entity.Node {
 	if sf.IsEmpty() {
 		return entity.Node{}
 	}
+
 	node := sf.frontier[len(sf.frontier)-1]
 	sf.frontier = sf.frontier[:len(sf.frontier)-1]
 	return node

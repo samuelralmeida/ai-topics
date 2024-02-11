@@ -54,17 +54,22 @@ func NewMaze(filename string, goalChar string) (*Maze, error) {
 }
 
 func (m *Maze) possibleActions(state entity.Coordinate) []entity.Action {
-	candidates := map[string]entity.Coordinate{
-		"up":    {Row: state.Row - 1, Collumn: state.Collumn},
-		"down":  {Row: state.Row + 1, Collumn: state.Collumn},
-		"left":  {Row: state.Row, Collumn: state.Collumn - 1},
-		"right": {Row: state.Row, Collumn: state.Collumn + 1},
+	type moveCandidate struct {
+		action     string
+		coordinate entity.Coordinate
+	}
+
+	candidates := []moveCandidate{
+		{action: "up", coordinate: entity.Coordinate{Row: state.Row - 1, Collumn: state.Collumn}},
+		{action: "down", coordinate: entity.Coordinate{Row: state.Row + 1, Collumn: state.Collumn}},
+		{action: "left", coordinate: entity.Coordinate{Row: state.Row, Collumn: state.Collumn - 1}},
+		{action: "right", coordinate: entity.Coordinate{Row: state.Row, Collumn: state.Collumn + 1}},
 	}
 
 	actions := []entity.Action{}
-	for action, coordinate := range candidates {
-		if m.isValidCoordinate(coordinate) && !m.isWall(coordinate) {
-			actions = append(actions, entity.Action{Description: action, Row: coordinate.Row, Collumn: coordinate.Collumn})
+	for _, candidate := range candidates {
+		if m.isValidCoordinate(candidate.coordinate) && !m.isWall(candidate.coordinate) {
+			actions = append(actions, entity.Action{Description: candidate.action, Row: candidate.coordinate.Row, Collumn: candidate.coordinate.Collumn})
 		}
 	}
 	return actions

@@ -1,14 +1,16 @@
 package frontier
 
-import "github.com/samuelralmeida/ai-topics/search/entity"
+import (
+	"github.com/samuelralmeida/ai-topics/search/entity"
+)
 
 type queueFrontier struct {
 	frontier []entity.Node
 }
 
 // NewQueuerFrontier returns queue frontier which applies bread-first search algorithm using queue data structure
-func NewQueueFrontier() *stackFrontier {
-	return &stackFrontier{frontier: []entity.Node{}}
+func NewQueueFrontier() *queueFrontier {
+	return &queueFrontier{frontier: []entity.Node{}}
 }
 
 func (qf *queueFrontier) Add(node entity.Node) {
@@ -23,6 +25,7 @@ func (qf *queueFrontier) Remove() entity.Node {
 	if qf.IsEmpty() {
 		return entity.Node{}
 	}
+
 	node := qf.frontier[0]
 	qf.frontier = qf.frontier[1:]
 	return node

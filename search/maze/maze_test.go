@@ -1,8 +1,10 @@
 package maze
 
 import (
-	"reflect"
 	"testing"
+
+	"github.com/samuelralmeida/ai-topics/search/entity"
+	"github.com/stretchr/testify/assert"
 )
 
 func TestMaze_buildWalls(t *testing.T) {
@@ -57,15 +59,43 @@ func TestMaze_buildWalls(t *testing.T) {
 			maze := Maze{}
 
 			err := maze.buildWalls(tt.args.filename)
-			if (err != nil) != tt.wantErr {
-				t.Errorf("BuldWalls() error = %v, wantErr %v", err, tt.wantErr)
-				return
-			}
+			assert.Equal(t, tt.wantErr, err != nil)
 
 			got := maze.Walls
-			if !reflect.DeepEqual(got, tt.want) {
-				t.Errorf("BuldWalls() walls = %v, want %v", got, tt.want)
-			}
+			assert.Equal(t, tt.want, got)
 		})
+	}
+}
+
+func TestMaze_possibleActions(t *testing.T) {
+	maze := Maze{
+		Walls: [][]string{
+			{"#", "#", " ", " ", " ", " ", "#"},
+			{"#", "#", " ", "#", "#", " ", "#"},
+			{"#", "B", " ", "#", " ", " ", "#"},
+			{"#", " ", "#", "#", " ", "#", "#"},
+			{" ", " ", " ", " ", " ", "#", "#"},
+			{"A", "#", "#", "#", "#", "#", "#"},
+		},
+		Height: 5,
+		Width:  6,
+	}
+
+	actions := maze.possibleActions(entity.Coordinate{Row: 4, Collumn: 1})
+	assert.Len(t, actions, 3)
+
+	for _, action := range actions {
+		if action.Description == "up" {
+			assert.Equal(t, 3, action.Row)
+			assert.Equal(t, 1, action.Collumn)
+		}
+		if action.Description == "left" {
+			assert.Equal(t, 4, action.Row)
+			assert.Equal(t, 0, action.Collumn)
+		}
+		if action.Description == "right" {
+			assert.Equal(t, 4, action.Row)
+			assert.Equal(t, 2, action.Collumn)
+		}
 	}
 }

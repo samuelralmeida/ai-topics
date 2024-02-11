@@ -11,16 +11,21 @@ import (
 func main() {
 	fmt.Println("AI TOPICS - SEARCH")
 
-	maze, err := maze.NewMaze("maze3.txt", "B")
+	mazeStackAI, err := maze.NewMaze("maze3.txt", "B")
 	if err != nil {
 		log.Fatal(err)
 	}
 
 	fmt.Println("")
 	fmt.Println("stack solution")
-	maze.PrintSolve(frontier.NewStackFrontier())
+	mazeStackAI.PrintSolve(frontier.NewStackFrontier())
+
+	mazeQueueAI, err := maze.NewMaze("maze3.txt", "B")
+	if err != nil {
+		log.Fatal(err)
+	}
 
 	fmt.Println("")
 	fmt.Println("queue solution")
-	maze.PrintSolve(frontier.NewQueueFrontier())
+	mazeQueueAI.PrintSolve(frontier.NewQueueFrontier())
 }
