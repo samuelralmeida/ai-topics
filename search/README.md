@@ -21,6 +21,10 @@ Usage
 
 ## Results
 
-The program will output the solution path and generate an image of the maze with the solution path highlighted.
+The program will output the cost path and generate an image of the maze with the path highlighted.
 
-The image will be saved as filename-frontier.png in the current directory.
+The image will be saved as {maze filename}-{frontier}.png in the current directory.
+
+### Image example:
+
+![maze solution image example](example.jpg)
