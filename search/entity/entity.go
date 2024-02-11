@@ -15,7 +15,7 @@ type Solution struct {
 	Actions       []Action
 	Cells         []Coordinate
 	NumExplored   int
-	NodesExplored map[Coordinate]struct{}
+	NodesExplored map[Coordinate]bool
 }
 
 type Node struct {

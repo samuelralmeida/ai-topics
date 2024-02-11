@@ -4,7 +4,10 @@ import (
 	"bufio"
 	"errors"
 	"fmt"
+	"log"
 	"slices"
+
+	"github.com/fogleman/gg"
 
 	"github.com/samuelralmeida/ai-topics/search/challenges"
 	"github.com/samuelralmeida/ai-topics/search/entity"
@@ -83,9 +86,40 @@ func (m *Maze) isWall(coordinate entity.Coordinate) bool {
 	return m.Walls[coordinate.Row][coordinate.Collumn] == "#"
 }
 
+func (m *Maze) buildWalls(filename string) error {
+	file, err := challenges.FS.Open(filename)
+	if err != nil {
+		return err
+	}
+	defer file.Close()
+
+	walls := [][]string{}
+	scanner := bufio.NewScanner(file)
+	for scanner.Scan() {
+		line := scanner.Text()
+		row := []string{}
+		for _, char := range line {
+			element := string(char)
+			if element == "" {
+				element = " "
+			}
+			row = append(row, element)
+		}
+		walls = append(walls, row)
+	}
+
+	if err := scanner.Err(); err != nil {
+		return err
+	}
+
+	m.Walls = walls
+
+	return nil
+}
+
 func (m *Maze) Solve(frontier Frontier) (*entity.Solution, error) {
 	numExplored := 0
-	explored := make(map[entity.Coordinate]struct{})
+	explored := make(map[entity.Coordinate]bool)
 
 	start := entity.Node{State: m.Start}
 	frontier.Add(start)
@@ -114,7 +148,7 @@ func (m *Maze) Solve(frontier Frontier) (*entity.Solution, error) {
 			return &entity.Solution{Actions: actions, Cells: cells, NumExplored: numExplored, NodesExplored: explored}, nil
 		}
 
-		explored[node.State] = struct{}{}
+		explored[node.State] = true
 		for _, action := range m.possibleActions(node.State) {
 			state := entity.Coordinate{Row: action.Row, Collumn: action.Collumn}
 			_, wasExĺored := explored[state]
@@ -150,33 +184,57 @@ func (m *Maze) PrintSolve(frontier Frontier) {
 	fmt.Println("path cost:", solution.NumExplored)
 }
 
-func (m *Maze) buildWalls(filename string) error {
-	file, err := challenges.FS.Open(filename)
+func (m *Maze) ImageSolve(filename string, frontier Frontier, showSolution, showExplored bool) {
+	solution, err := m.Solve(frontier)
 	if err != nil {
-		return err
+		fmt.Println(err)
+		return
 	}
-	defer file.Close()
 
-	walls := [][]string{}
-	scanner := bufio.NewScanner(file)
-	for scanner.Scan() {
-		line := scanner.Text()
-		row := []string{}
-		for _, char := range line {
-			element := string(char)
-			if element == "" {
-				element = " "
+	cellSize := 50.0
+	cellBorder := 2.0
+
+	// Create a new context
+	dc := gg.NewContext(int(cellSize*float64(m.Width+1)), int(cellSize*float64(m.Height+1)))
+	dc.SetRGB255(0, 0, 0)
+	dc.Clear()
+
+	for i, row := range m.Walls {
+		for j, col := range row {
+			coordinate := entity.Coordinate{Row: i, Collumn: j}
+
+			if col == "#" {
+				// walls
+				dc.SetRGB255(40, 40, 40)
+			} else if coordinate == m.Start {
+				// start
+				dc.SetRGB255(255, 0, 0)
+			} else if col == m.Goal {
+				// goal
+				dc.SetRGB255(0, 171, 28)
+			} else if showSolution && slices.Contains(solution.Cells, coordinate) {
+				// solution
+				dc.SetRGB255(220, 235, 113)
+			} else if showExplored && solution.NodesExplored[coordinate] {
+				// explored
+				dc.SetRGB255(212, 97, 85)
+			} else {
+				// empty cell
+				dc.SetRGB255(237, 240, 252)
 			}
-			row = append(row, element)
+
+			// draw cell
+			dc.DrawRectangle(
+				float64(j)*cellSize+cellBorder, float64(i)*cellSize+cellBorder,
+				cellSize-2*cellBorder, cellSize-2*cellBorder,
+			)
+			dc.Fill()
 		}
-		walls = append(walls, row)
 	}
 
-	if err := scanner.Err(); err != nil {
-		return err
+	// Save the image to a file
+	err = dc.SavePNG(filename)
+	if err != nil {
+		log.Fatal(err)
 	}
-
-	m.Walls = walls
-
-	return nil
 }

@@ -18,7 +18,8 @@ func main() {
 
 	fmt.Println("")
 	fmt.Println("stack solution")
-	mazeStackAI.PrintSolve(frontier.NewStackFrontier())
+	// mazeStackAI.PrintSolve(frontier.NewStackFrontier())
+	mazeStackAI.ImageSolve("stack.png", frontier.NewStackFrontier(), true, true)
 
 	mazeQueueAI, err := maze.NewMaze("maze3.txt", "B")
 	if err != nil {
@@ -27,5 +28,6 @@ func main() {
 
 	fmt.Println("")
 	fmt.Println("queue solution")
-	mazeQueueAI.PrintSolve(frontier.NewQueueFrontier())
+	// mazeQueueAI.PrintSolve(frontier.NewQueueFrontier())
+	mazeQueueAI.ImageSolve("queue.png", frontier.NewQueueFrontier(), true, true)
 }
