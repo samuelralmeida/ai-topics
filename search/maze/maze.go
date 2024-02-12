@@ -24,7 +24,7 @@ type Maze struct {
 	Width  int
 	Walls  [][]string
 	Start  entity.Coordinate
-	Goal   string
+	Goal   entity.Coordinate
 }
 
 func NewMaze(filename string, goalChar string) (*Maze, error) {
@@ -36,6 +36,7 @@ func NewMaze(filename string, goalChar string) (*Maze, error) {
 	}
 
 	start := entity.Coordinate{}
+	goal := entity.Coordinate{}
 
 	for i, row := range maze.Walls {
 		for j, collumn := range row {
@@ -43,11 +44,15 @@ func NewMaze(filename string, goalChar string) (*Maze, error) {
 				start.Collumn = j
 				start.Row = i
 			}
+			if collumn == goalChar {
+				goal.Collumn = j
+				goal.Row = i
+			}
 		}
 	}
 
 	maze.Start = start
-	maze.Goal = goalChar
+	maze.Goal = goal
 
 	maze.Height = len(maze.Walls) - 1
 	maze.Width = len(maze.Walls[0]) - 1
@@ -61,6 +66,7 @@ func (m *Maze) possibleActions(state entity.Coordinate) []entity.Action {
 		coordinate entity.Coordinate
 	}
 
+	// changing the order can change the result of the algorithm
 	candidates := []moveCandidate{
 		{action: "up", coordinate: entity.Coordinate{Row: state.Row - 1, Collumn: state.Collumn}},
 		{action: "down", coordinate: entity.Coordinate{Row: state.Row + 1, Collumn: state.Collumn}},
@@ -131,7 +137,7 @@ func (m *Maze) Solve(frontier Frontier) (*entity.Solution, error) {
 
 		node := frontier.Remove()
 		numExplored++
-		if m.Walls[node.State.Row][node.State.Collumn] == m.Goal {
+		if node.State == m.Goal {
 			actions := []entity.Action{}
 			cells := []entity.Coordinate{}
 
@@ -197,7 +203,7 @@ func (m *Maze) GenerateImage(filename string, solution *entity.Solution, showSol
 			} else if coordinate == m.Start {
 				// start
 				dc.SetRGB255(255, 0, 0)
-			} else if col == m.Goal {
+			} else if coordinate == m.Goal {
 				// goal
 				dc.SetRGB255(0, 171, 28)
 			} else if showSolution && slices.Contains(solution.Cells, coordinate) {
