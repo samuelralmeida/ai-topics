@@ -158,7 +158,7 @@ func (m *Maze) Solve(frontier Frontier) (*entity.Solution, error) {
 			state := entity.Coordinate{Row: action.Row, Collumn: action.Collumn}
 			_, wasExĺored := explored[state]
 			if !frontier.ContainsState(state) && !wasExĺored {
-				child := entity.Node{State: state, Parent: &node, Action: action}
+				child := entity.Node{State: state, Parent: &node, Action: action, ReachCost: node.ReachCost + 1}
 				frontier.Add(child)
 			}
 		}

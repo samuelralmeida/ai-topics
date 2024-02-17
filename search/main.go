@@ -14,7 +14,7 @@ func main() {
 	fmt.Println("AI TOPICS - SEARCH")
 
 	flagMazeFile := flag.String("m", "maze1.txt", "maze filename")
-	flagFrontier := flag.String("f", "queue", "frontier option: stack | queue | greedy")
+	flagFrontier := flag.String("f", "queue", "frontier option: stack | queue | greedy | a-star")
 	flagShowSolution := flag.Bool("s", true, "image shows solution path")
 	flagShowExplored := flag.Bool("e", false, "image shows explored path")
 
@@ -36,6 +36,8 @@ func main() {
 		f = frontier.NewStackFrontier()
 	case "greedy":
 		f = frontier.NewGreedyFrontier(m.Goal)
+	case "a-star":
+		f = frontier.NewAStarFrontier(m.Goal)
 	}
 
 	solution, err := m.Solve(f)

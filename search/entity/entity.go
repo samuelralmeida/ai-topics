@@ -19,7 +19,8 @@ type Solution struct {
 }
 
 type Node struct {
-	State  Coordinate
-	Parent *Node
-	Action Action
+	State     Coordinate
+	Parent    *Node
+	Action    Action
+	ReachCost int
 }
