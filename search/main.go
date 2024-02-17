@@ -25,8 +25,6 @@ func main() {
 		log.Fatal(err)
 	}
 
-	fmt.Println(m.Goal)
-
 	var f maze.Frontier
 
 	f = frontier.NewQueueFrontier()

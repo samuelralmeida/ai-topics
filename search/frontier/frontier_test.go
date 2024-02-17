@@ -66,3 +66,36 @@ func Test_stackFrontier_Remove(t *testing.T) {
 		})
 	}
 }
+
+func Test_greedyFrontier_Remove(t *testing.T) {
+	type fields struct {
+		frontier []entity.Node
+	}
+
+	tests := []struct {
+		name   string
+		fields fields
+		goal   entity.Coordinate
+		want   entity.Node
+	}{
+		{
+			name: "manhatan distance",
+			fields: fields{frontier: []entity.Node{
+				{State: entity.Coordinate{Row: 4, Collumn: 2}},
+				{State: entity.Coordinate{Row: 3, Collumn: 3}},
+				{State: entity.Coordinate{Row: 5, Collumn: 3}},
+			}},
+			goal: entity.Coordinate{Row: 0, Collumn: 11},
+			want: entity.Node{State: entity.Coordinate{Row: 3, Collumn: 3}},
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			gf := &greedyFrontier{frontier: tt.fields.frontier, goal: tt.goal}
+
+			got := gf.Remove()
+			assert.Equal(t, tt.want, got)
+			assert.Len(t, gf.frontier, 2)
+		})
+	}
+}
