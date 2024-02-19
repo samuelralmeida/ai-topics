@@ -112,7 +112,7 @@ func Test_aStarFrontier_Remove(t *testing.T) {
 		want   entity.Node
 	}{
 		{
-			name: "manhatan distance",
+			name: "manhatan distance + reach cost",
 			fields: fields{frontier: []entity.Node{
 				{State: entity.Coordinate{Row: 0, Collumn: 2}, ReachCost: 25},
 				{State: entity.Coordinate{Row: 4, Collumn: 2}, ReachCost: 6},
