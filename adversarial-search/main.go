@@ -166,11 +166,6 @@ func (g *Game) Draw(screen *ebiten.Image) {
 	}
 
 	if g.GameOver {
-		// playAgainButton := g.PlayAgainButton.Lines()
-		// for _, l := range playAgainButton {
-		// 	vector.StrokeLine(screen, float32(l.X0), float32(l.Y0), float32(l.X1), float32(l.Y1), 3, color.White, false)
-		// }
-
 		msg := "PLAY AGAIN"
 		textWidth := font.MeasureString(bigText, msg).Ceil()
 		textX := (g.Width - textWidth) / 2

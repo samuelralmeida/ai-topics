@@ -2,7 +2,6 @@ package main
 
 import (
 	"math"
-	"slices"
 )
 
 const X string = "X"
@@ -41,7 +40,6 @@ func actions(board [][]string) [][]int {
 			}
 		}
 	}
-	slices.Reverse(actions)
 	return actions
 }
 
@@ -49,9 +47,7 @@ func result(board [][]string, action []int) [][]string {
 	result := initialState()
 
 	for i, row := range board {
-		for j, cel := range row {
-			result[i][j] = cel
-		}
+		copy(result[i], row)
 	}
 
 	result[action[0]][action[1]] = player(board)
